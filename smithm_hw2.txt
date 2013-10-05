@@ -1,0 +1,147 @@
+Maghen Smith
+mjs0026@tigermail.auburn.edu
+None 
+Code:
+
+// Maghen Smith
+// Sources: http://www.cprogramming.com/tutorial/c/lesson14.html
+// http://stackoverflow.com/questions/868496/how-to-convert-char-to-integer-in-c
+// http://rosettacode.org/wiki/Read_entire_file#C
+// http://stackoverflow.com/questions/2227198/segmentation-fault-when-using-strtok-r
+
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]){
+
+ int x = 0, i = 0, j = 0, number = 0, stack_counter = 0, u = 0;
+
+
+  FILE *fp;
+  if (argc != 2)
+    {printf("Usage: smithm_hw2.exe encrypted_file");}
+  //printf("%s", argv[1]);
+  fp = fopen(argv[1], "r");
+ char *buffer;
+ if (fp != NULL){
+   fseek(fp, 0L, SEEK_END);
+   long s = ftell(fp);
+   rewind(fp);
+   buffer = malloc(s);
+   if(buffer != NULL){
+    fread(buffer, s, 1, fp);
+    fclose(fp); fp = NULL;
+    //fwrite(buffer, s, 1, stdout);
+    
+   }
+   if (fp != NULL) fclose(fp);
+ }
+ 
+ for(i = 0; i < strlen(buffer); i++){
+   // printf("\n%d : %c ",i,  buffer[i]);
+
+    if((buffer[i] == ' ') && (buffer[i+1] == ' ') && (buffer[i+2] == ' ')){
+      buffer[i+1] = '^';
+     // printf(" %d : %c ", i, buffer[i]);
+
+      ++i;
+      ++i;
+    }
+  
+  }
+  buffer[i++] = '\0';
+ 
+ 
+char encrypted[strlen(buffer)];
+char *unencrypted = (char *)malloc(strlen(buffer));
+char stack[strlen(buffer)];
+char *p = buffer, *sp = " ", *temp =(char *)malloc(5), *t = (char *)malloc(5), *m = (char *)malloc(5);
+memset(unencrypted, 0, strlen(buffer));
+strcpy(unencrypted, "");
+for (i = 0; i < strlen(buffer); i++){  //change later
+
+   memset(temp, 0, 5);
+   memset(t, 0, 5);
+   memset(m, 0, 5);
+   strcpy(temp, "");
+	
+	if(p[i] == '^'){
+	 	strcat(unencrypted, sp);
+	 	//printf("\nUnencrypted %s", unencrypted);
+	 	stack[stack_counter] = *sp;
+	 		//printf("\nStack[%d] = %c.", stack_counter, stack[stack_counter]);
+	 	stack_counter++;
+        }
+    else if (p[i] == *sp){ 
+    }
+    else if (isalpha(p[i])){
+    	*temp = p[i];
+    	strcat(unencrypted, temp);
+    	//printf("\nUnencrypted %s", unencrypted);
+    	stack[stack_counter] = p[i];
+	 		//printf("\nStack[%d] = %c.", stack_counter, stack[stack_counter]);
+	 	stack_counter++;
+    }
+    else if (isdigit((int)p[i])){
+    		if(isdigit((int)p[i+1])){ 
+    		//printf("\nMULT DIGIT i = %c; i+1 = %c", p[i], p[i+1]);
+					*t = p[i];
+					//printf("\n\t\t----------- t = %s", t);
+					strcat(temp, t);
+					*t = p[i+1]; 
+					strcat(temp, t);
+					//printf("\n\t\t********temp = %s", temp);
+					number = atoi(temp);
+					++i;
+					//printf("\n\t\tDIGIT Changed i to %d", number);
+				 }
+				 else{ 
+				 	number = (p[i] - '0');
+				 	//printf("\n\t\t\t NUMBER %d", number);
+				 }
+				 memset(temp, 0, 5);
+				strcpy(temp, "");
+				 if(number > 0){
+				 	//printf("\n\tLetter we want: %c.", stack[stack_counter - number - 1]);
+				 	*temp = stack[stack_counter - number - 1];
+				 	strcat(unencrypted, temp);
+				 		//printf("\nTesting Unencrypted: %s", unencrypted);
+				 	for(j = (stack_counter - number - 1); j <(stack_counter - 1);j++ ){
+				 		stack[j] = stack[j+1];
+				 		//printf("\n\t\t\tstack[%d]=%c", j, stack[j]);
+				 		
+				 	}
+				 	stack[stack_counter - 1] = *temp;
+				 	//printf("\nTEST:");
+				 	//for(j = 0; j < stack_counter; j++){ //printf("\nstack[%d]=%c.",j, stack[j] );
+				 	//}
+				 }
+				 else if (number == 0) {
+				 	*temp = stack[stack_counter - 1];
+				 	strcat(unencrypted, temp);
+				 	//printf("\nTesting Unencrypted: %s", unencrypted);
+				 }
+		}
+		else {
+		*temp = p[i];
+		strcat(unencrypted, temp);
+		//printf("\nUnencrypted %s", unencrypted);
+		stack[stack_counter] = p[i];
+	 		//printf("\nStack[%d] = %c.", stack_counter, stack[stack_counter]);
+	 	stack_counter++;
+		}
+        
+}
+memset(temp, 0, 5);
+*temp = '^';
+printf("\nEncrypted:\n");
+for(i = 0; i < strlen(buffer);i++){
+	if(buffer[i] == *temp){printf(" ");}
+	else{printf("%c",buffer[i]);}
+	}
+printf("\nUnencrypted:\n%s", unencrypted);
+  
+return 0;
+}

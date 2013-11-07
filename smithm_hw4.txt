@@ -1,0 +1,62 @@
+Maghen Smith
+mjs0026@auburn.edu
+Sources: http://jumpespjump.blogspot.com/2013/07/cyberlympics-2013-round-1-writeup-and.html
+I discussed this with Adam Brown.
+
+1. What files were transferred to/from the victim?
+Download:
+favicon.ico (frame: 16995, 7002 bytes)
+challenges.zip (frame: 17028, 923 bytes)
+RPWD.RTF (frame: 17045, 232 bytes)
+
+Upload:
+PwDump7.exe (frame 19523, 77 824 B)
+sdb.exe (frame 26964, 139 264 B)
+BFK.exe (frame 27204, 274 432 B)
+MISINET.OCX (frame 27516, 115 920 B)
+convertel.dll (frame 27649, 459 776 B)
+inetlog.txt (frame 28109 240 B)
+keylog.txt (frame 28126, 2 B) 
+needtosend.log (frame 28143, 0 B)
+sclog.txt (frame 28161, 0 B)
+
+2. What malware/unauthorized programs were installed?
+BFK.exe
+Application.Best_Free_Keylogger
+
+converter.dll
+Application.Best_Free_Keylogger
+
+sbd.exe
+Secure_BackDoor (crypted netcat)
+
+PwDump7.exe
+Trojan.Pwdump
+
+MSINET.OCX
+Win32.Flooder.IM.VB
+
+3. What directory were files transferred to or from? 
+C:\inetpub\ftproot\GMTMP
+ 
+4. What is the MD5 hash of files transferred from the web server? 
+favicon.ico (frame: 16995, 7002 bytes) - 993a36908782cb531c5e6f9f40c3102d
+challenges.zip (frame: 17028, 923 bytes) - 0492a385f6db8a947f3434e2683e8353
+RPWD.RTF (frame: 17045, 232 bytes) - 0ecc217d8cff2fdc366450e56a92282c
+
+5. What is the router password?
+hash: 7 0139562C753F2E5C067E16.
+Using a cisco 7 decryptor —> JOHNTH3GR8
+
+6. What was the admin doing during the attack? 
+searching amazon.com with keywords “awesome stuff”
+a.tgcdn.net (reddit)
+google
+facebook
+think-geek
+reuters
+…
+
+7. What were user passwords changed to? GMODEOWNZYOU
+8. Were there any suspicious users on the machine? badmin
+9. What file did the attacker hide info in that was extracted later? favicon.ico

